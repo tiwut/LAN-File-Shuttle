@@ -1,0 +1,5 @@
+{
+  "name": "LAN File Shuttle",
+  "description": "A web-based utility for simulating fast and easy file transfers across a local network. Select files to generate a transfer code, and use that code on another device to simulate receiving them.",
+  "requestFramePermissions": []
+}
