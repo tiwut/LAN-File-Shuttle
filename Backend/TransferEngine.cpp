@@ -6,7 +6,6 @@
 TransferEngine::TransferEngine(QObject *parent) : QObject(parent) {
     m_socket = new QTcpSocket(this);
     
-    // Once connected, start sending
     connect(m_socket, &QTcpSocket::connected, this, &TransferEngine::onEncrypted);
     connect(m_socket, &QTcpSocket::bytesWritten, this, &TransferEngine::writeNextChunk);
 }
@@ -20,7 +19,7 @@ void TransferEngine::sendFileSecurely(const QString& ip, int port, const QString
     m_totalBytes = m_currentFile->size();
     m_bytesSent = 0;
     
-    m_socket->connectToHost(ip, port); // Connect to the ReceiveEngine!
+    m_socket->connectToHost(ip, port);
 }
 
 void TransferEngine::onEncrypted() {
