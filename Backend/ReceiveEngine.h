@@ -14,10 +14,14 @@ public:
     int receiveProgress() const;
     QString currentFileName() const;
 
+    Q_INVOKABLE void acceptTransfer(const QString& savePath);
+    Q_INVOKABLE void rejectTransfer();
+
 signals:
     void receiveProgressChanged();
     void currentFileNameChanged();
     void transferFinished(QString message);
+    void incomingTransfer(QString fileName, qint64 fileSize);
 
 private slots:
     void onNewConnection();
@@ -29,7 +33,9 @@ private:
     QTcpSocket* m_client = nullptr;
     QFile* m_file = nullptr;
     
-    bool m_readingMetadata = true;
+    enum State { Idle, ReadingMetadata, WaitingForUser, ReceivingData };
+    State m_state = Idle;
+
     qint64 m_expectedFileSize = 0;
     qint64 m_bytesReceived = 0;
     

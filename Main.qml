@@ -14,6 +14,28 @@ ApplicationWindow {
 
     property string selectedTargetIp: ""
 
+    Connections {
+        target: receiveEngine
+        function onIncomingTransfer(fileName, fileSize) {
+            saveFolderDialog.title = "Save incoming file: " + fileName + " (" + (fileSize / 1024 / 1024).toFixed(2) + " MB)"
+            saveFolderDialog.open()
+        }
+    }
+
+    FolderDialog {
+        id: saveFolderDialog
+        onAccepted: {
+            var folderUrl = currentFolder.toString()
+            if (!folderUrl.endsWith("/")) folderUrl += "/"
+            
+            var fullSavePath = folderUrl + receiveEngine.currentFileName
+            receiveEngine.acceptTransfer(fullSavePath)
+        }
+        onRejected: {
+            receiveEngine.rejectTransfer()
+        }
+    }
+
     FileDialog {
         id: directTransferDialog
         title: "Select File to Send"
@@ -33,7 +55,7 @@ ApplicationWindow {
             for (var i = 0; i < currentFiles.length; i++) {
                 fileList.push(currentFiles[i].toString())
             }
-            webServer.startSharing(fileList)
+            webServer.startSharing(fileList) 
         }
     }
 
@@ -118,7 +140,7 @@ ApplicationWindow {
                         font.pixelSize: 16
                         onClicked: {
                             selectedTargetIp = modelData.ip
-                            directTransferDialog.open()
+                            directTransferDialog.open() 
                         }
                     }
                 }
