@@ -1,0 +1,5 @@
+module ShuttleUI
+typeinfo appLANShuttlePro.qmltypes
+prefer :/qt/qml/ShuttleUI/
+Main 1.0 Main.qml
+

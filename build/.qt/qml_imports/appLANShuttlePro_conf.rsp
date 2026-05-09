@@ -1,0 +1,14 @@
+-rootPath
+/var/home/tiwut/Documents/GitHub/LAN-File-Shuttle
+-cmake-output
+-output-file
+/var/home/tiwut/Documents/GitHub/LAN-File-Shuttle/build/.qt/qml_imports/appLANShuttlePro_conf.cmake
+-importPath
+/var/home/tiwut/Documents/GitHub/LAN-File-Shuttle/build/ShuttleUI
+-importPath
+/var/home/tiwut/Documents/GitHub/LAN-File-Shuttle/build
+-importPath
+/usr/lib/x86_64-linux-gnu/qt6/qml
+-qrcFiles
+/var/home/tiwut/Documents/GitHub/LAN-File-Shuttle/build/.qt/rcc/qmake_ShuttleUI.qrc
+/var/home/tiwut/Documents/GitHub/LAN-File-Shuttle/build/.qt/rcc/appLANShuttlePro_raw_qml_0.qrc

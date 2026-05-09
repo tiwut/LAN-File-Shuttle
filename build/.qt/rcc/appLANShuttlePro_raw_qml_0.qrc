@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/qt/qml/ShuttleUI/">
+    <file alias="Main.qml">/var/home/tiwut/Documents/GitHub/LAN-File-Shuttle/Main.qml</file>
+  </qresource>
+</RCC>
+
