@@ -7,7 +7,7 @@ ApplicationWindow {
     visible: true
     width: 900
     height: 700
-    title: "LAN Shuttle Pro 🚀"
+    title: "LAN Shuttle Pro"
     
     Material.theme: Material.Dark
     Material.accent: Material.Blue
@@ -15,11 +15,25 @@ ApplicationWindow {
     property string selectedTargetIp: ""
 
     FileDialog {
-        id: fileDialog
+        id: directTransferDialog
         title: "Select File to Send"
+        fileMode: FileDialog.OpenFile
         onAccepted: {
             var realPath = currentFile.toString().replace("file://", "")
             transferEngine.sendFileSecurely(selectedTargetIp, 65432, realPath)
+        }
+    }
+
+    FileDialog {
+        id: webFileDialog
+        title: "Select Files for Web Share"
+        fileMode: FileDialog.OpenFiles
+        onAccepted: {
+            var fileList = []
+            for (var i = 0; i < currentFiles.length; i++) {
+                fileList.push(currentFiles[i].toString())
+            }
+            webServer.startSharing(fileList)
         }
     }
 
@@ -27,7 +41,7 @@ ApplicationWindow {
         anchors.fill: parent
         
         Rectangle {
-            Layout.preferredWidth: 280
+            Layout.preferredWidth: 320
             Layout.fillHeight: true
             color: Material.dialogColor
             
@@ -61,12 +75,12 @@ ApplicationWindow {
                 }
 
                 Button {
-                    text: webServer.serverUrl === "" ? "Start Web Share" : "Stop Sharing"
+                    text: webServer.serverUrl === "" ? "📂 Select Files & Start Web" : "🛑 Stop Sharing"
                     highlighted: true
                     Layout.alignment: Qt.AlignHCenter
                     onClicked: {
                         if (webServer.serverUrl === "") {
-                            webServer.startSharing([""])
+                            webFileDialog.open()
                         } else {
                             webServer.stopSharing()
                         }
@@ -104,7 +118,7 @@ ApplicationWindow {
                         font.pixelSize: 16
                         onClicked: {
                             selectedTargetIp = modelData.ip
-                            fileDialog.open()
+                            directTransferDialog.open()
                         }
                     }
                 }
