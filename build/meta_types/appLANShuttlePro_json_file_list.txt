@@ -1,3 +1,0 @@
-/var/home/tiwut/Documents/GitHub/LAN-File-Shuttle/build/appLANShuttlePro_autogen/include/../3X2AN3DXFV/moc_DiscoveryService.cpp.json
-/var/home/tiwut/Documents/GitHub/LAN-File-Shuttle/build/appLANShuttlePro_autogen/include/../3X2AN3DXFV/moc_TransferEngine.cpp.json
-/var/home/tiwut/Documents/GitHub/LAN-File-Shuttle/build/appLANShuttlePro_autogen/include/../3X2AN3DXFV/moc_WebServer.cpp.json
