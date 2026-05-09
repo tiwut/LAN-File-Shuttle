@@ -7,17 +7,19 @@ ApplicationWindow {
     visible: true
     width: 900
     height: 700
-    title: "LAN Shuttle Pro"
+    title: "LAN Shuttle Pro 🚀"
     
-    Material.theme: Material.System
+    Material.theme: Material.Dark
     Material.accent: Material.Blue
+
+    property string selectedTargetIp: ""
 
     FileDialog {
         id: fileDialog
-        title: "Select Files to Send"
-        fileMode: FileDialog.OpenFiles
+        title: "Select File to Send"
         onAccepted: {
-            webServer.startSharing(currentFiles)
+            var realPath = currentFile.toString().replace("file://", "")
+            transferEngine.sendFileSecurely(selectedTargetIp, 65432, realPath)
         }
     }
 
@@ -25,7 +27,7 @@ ApplicationWindow {
         anchors.fill: parent
         
         Rectangle {
-            Layout.preferredWidth: 250
+            Layout.preferredWidth: 280
             Layout.fillHeight: true
             color: Material.dialogColor
             
@@ -37,27 +39,38 @@ ApplicationWindow {
                     text: "📱 Web & QR Share"
                     font.pixelSize: 20
                     font.bold: true
-                    color: Material.foreground
+                    color: "white"
+                    Layout.alignment: Qt.AlignHCenter
                 }
                 
                 Image {
-                    source: webServer.qrCodeImage !== "" ? webServer.qrCodeImage : ""
+                    source: webServer.qrCodeImage
                     Layout.preferredWidth: 200
                     Layout.preferredHeight: 200
                     visible: webServer.serverUrl !== ""
+                    fillMode: Image.PreserveAspectFit
                 }
                 
                 Text {
                     text: webServer.serverUrl
                     color: Material.accentColor
-                    font.pixelSize: 14
+                    font.pixelSize: 16
+                    font.bold: true
                     visible: webServer.serverUrl !== ""
+                    Layout.alignment: Qt.AlignHCenter
                 }
 
                 Button {
-                    text: "Select Files to Share"
+                    text: webServer.serverUrl === "" ? "Start Web Share" : "Stop Sharing"
                     highlighted: true
-                    onClicked: fileDialog.open()
+                    Layout.alignment: Qt.AlignHCenter
+                    onClicked: {
+                        if (webServer.serverUrl === "") {
+                            webServer.startSharing([""])
+                        } else {
+                            webServer.stopSharing()
+                        }
+                    }
                 }
             }
         }
@@ -73,10 +86,10 @@ ApplicationWindow {
                 spacing: 20
 
                 Text {
-                    text: "🔒 Secure App-to-App Transfer"
+                    text: "📡 Send to Devices"
                     font.pixelSize: 24
                     font.bold: true
-                    color: Material.foreground
+                    color: "white"
                 }
 
                 ListView {
@@ -89,27 +102,36 @@ ApplicationWindow {
                         text: "💻 " + modelData.hostname + "  (" + modelData.ip + ")"
                         width: parent.width
                         font.pixelSize: 16
-                        
                         onClicked: {
-                            transferEngine.sendFileSecurely(modelData.ip, 65432, "/path/to/file.mp4")
+                            selectedTargetIp = modelData.ip
+                            fileDialog.open()
                         }
                     }
                 }
-                
+
                 Text {
-                    text: "Looking for devices on your network..."
+                    text: "Scanning for nearby devices..."
                     color: "gray"
                     visible: deviceList.count === 0
-                    Layout.alignment: Qt.AlignHCenter
                 }
 
+                Text { text: "📤 Sending Progress:"; color: "white"; visible: transferEngine.progress > 0 }
                 ProgressBar {
                     Layout.fillWidth: true
                     value: transferEngine.progress / 100.0
+                    visible: transferEngine.progress > 0
                 }
-                Text {
-                    text: transferEngine.speed + " MB/s | Encrypted TLS 1.3 🔒"
-                    color: "gray"
+
+                Text { 
+                    text: "📥 Receiving: " + receiveEngine.currentFileName
+                    color: "white"
+                    visible: receiveEngine.receiveProgress > 0 && receiveEngine.receiveProgress < 100
+                }
+                ProgressBar {
+                    Layout.fillWidth: true
+                    value: receiveEngine.receiveProgress / 100.0
+                    visible: receiveEngine.receiveProgress > 0 && receiveEngine.receiveProgress < 100
+                    Material.accent: Material.Green
                 }
             }
         }

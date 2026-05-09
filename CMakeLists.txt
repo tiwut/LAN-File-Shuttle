@@ -19,6 +19,7 @@ qt_add_executable(appLANShuttlePro
     Backend/TransferEngine.cpp Backend/TransferEngine.h
     Backend/WebServer.cpp Backend/WebServer.h
     Backend/DiscoveryService.cpp Backend/DiscoveryService.h
+    Backend/ReceiveEngine.cpp Backend/ReceiveEngine.h
 )
 
 qt_add_qml_module(appLANShuttlePro

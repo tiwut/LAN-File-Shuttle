@@ -4,13 +4,11 @@
 #include <QJsonObject>
 
 TransferEngine::TransferEngine(QObject *parent) : QObject(parent) {
-    m_socket = new QSslSocket(this);
+    m_socket = new QTcpSocket(this);
     
-    connect(m_socket, QOverload<const QList<QSslError> &>::of(&QSslSocket::sslErrors),
-            [this](const QList<QSslError> &errors){ m_socket->ignoreSslErrors(); });
-            
-    connect(m_socket, &QSslSocket::encrypted, this, &TransferEngine::onEncrypted);
-    connect(m_socket, &QSslSocket::bytesWritten, this, &TransferEngine::writeNextChunk);
+    // Once connected, start sending
+    connect(m_socket, &QTcpSocket::connected, this, &TransferEngine::onEncrypted);
+    connect(m_socket, &QTcpSocket::bytesWritten, this, &TransferEngine::writeNextChunk);
 }
 
 void TransferEngine::sendFileSecurely(const QString& ip, int port, const QString& filePath) {
@@ -22,7 +20,7 @@ void TransferEngine::sendFileSecurely(const QString& ip, int port, const QString
     m_totalBytes = m_currentFile->size();
     m_bytesSent = 0;
     
-    m_socket->connectToHostEncrypted(ip, port);
+    m_socket->connectToHost(ip, port); // Connect to the ReceiveEngine!
 }
 
 void TransferEngine::onEncrypted() {
@@ -40,26 +38,21 @@ void TransferEngine::onEncrypted() {
 void TransferEngine::writeNextChunk() {
     if (!m_currentFile) return;
     
-    QByteArray chunk = m_currentFile->read(65536);
+    QByteArray chunk = m_currentFile->read(65536); 
     if (chunk.isEmpty()) {
         m_currentFile->close();
         m_currentFile->deleteLater();
         m_currentFile = nullptr;
-        emit transferComplete(true, "Secure transfer finished!");
+        m_socket->disconnectFromHost();
+        emit transferComplete(true, "Transfer finished successfully!");
         return;
     }
     
     m_socket->write(chunk);
     m_bytesSent += chunk.size();
-    
     m_progress = (m_bytesSent * 100) / m_totalBytes;
     emit progressChanged();
 }
 
-int TransferEngine::progress() const {
-    return m_progress;
-}
-
-QString TransferEngine::speed() const {
-    return m_speed;
-}
+int TransferEngine::progress() const { return m_progress; }
+QString TransferEngine::speed() const { return m_speed; }

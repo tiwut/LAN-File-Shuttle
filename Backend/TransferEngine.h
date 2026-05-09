@@ -1,7 +1,7 @@
 #pragma once
 #include <QObject>
-#include <QSslSocket>
 #include <QFile>
+#include <QTcpSocket>
 
 class TransferEngine : public QObject {
     Q_OBJECT
@@ -26,7 +26,7 @@ private slots:
     void writeNextChunk();
 
 private:
-    QSslSocket* m_socket;
+    QTcpSocket* m_socket;
     QFile* m_currentFile;
     qint64 m_bytesSent;
     qint64 m_totalBytes;

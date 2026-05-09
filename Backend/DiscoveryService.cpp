@@ -89,9 +89,19 @@ QVariantList DiscoveryService::activeDevices() const {
 }
 
 QString DiscoveryService::getLocalIp() {
-    for (const auto& address : QNetworkInterface::allAddresses()) {
-        if (address.protocol() == QAbstractSocket::IPv4Protocol && address != QHostAddress::LocalHost)
-            return address.toString();
+    for (const QNetworkInterface &iface : QNetworkInterface::allInterfaces()) {
+        if (!(iface.flags() & QNetworkInterface::IsUp) || 
+             (iface.flags() & QNetworkInterface::IsLoopBack) || 
+             iface.humanReadableName().contains("VMware") || 
+             iface.humanReadableName().contains("Docker") ||
+             iface.humanReadableName().contains("vEthernet")) {
+            continue;
+        }
+        for (const QNetworkAddressEntry &entry : iface.addressEntries()) {
+            if (entry.ip().protocol() == QAbstractSocket::IPv4Protocol) {
+                return entry.ip().toString();
+            }
+        }
     }
     return "127.0.0.1";
 }
