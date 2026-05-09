@@ -10,7 +10,6 @@ This application is designed to be cross-platform and is available for the follo
 
 *   **Windows**: Installer and standalone executable available.
 *   **Linux**: Provided as a `.deb` package for Debian-based distributions (like Ubuntu, Mint).
-*   **Tiwut Launcher**: Also accessible for quick launch via the Tiwut Launcher at [https://launcher.tiwut.de/](https://launcher.tiwut.de/).
 
 ---
 
